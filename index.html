@@ -1,187 +1,21 @@
-<!DOCTYPE html>
-<html lang="ml">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sports - Real Madrid vs Man City</title>
-    <style>
-        :root { --bg: #000; --card: #171717; --tab-active: #e8f0fe; --blue: #1a73e8; --grey: #9aa0a6; --border: #333; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
-        
-        /* ഗൂഗിൾ സ്കോർബോർഡ് */
-        .scoreboard { text-align: center; padding: 25px 10px; border-bottom: 1px solid var(--border); }
-        .league-info { font-size: 12px; color: var(--grey); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .score-row { display: flex; justify-content: space-around; align-items: center; }
-        .team { width: 30%; }
-        .logo-l { width: 50px; height: 50px; border-radius: 50%; background: #222; margin-bottom: 8px; object-fit: cover; }
-        .score-l { font-size: 44px; font-weight: bold; font-family: 'Google Sans', sans-serif; }
-        .match-status { color: var(--grey); font-size: 13px; margin-top: 10px; }
+<!-- ലളിതമായ ഒരു മാച്ച് കാർഡ് സ്ട്രക്ചർ -->
+<div class="match-center">
+  <div class="header">
+    <img src="team1-icon.png" alt="Team 1"> 
+    <span>Team A vs Team B</span>
+    <img src="team2-icon.png" alt="Team 2">
+  </div>
+  
+  <div class="stats-table">
+    <!-- Stats like Possession, Shots will go here -->
+  </div>
 
-        /* ടാബുകൾ */
-        .tabs { display: flex; gap: 10px; overflow-x: auto; padding: 15px 0; border-bottom: 1px solid var(--border); scrollbar-width: none; }
-        .tab-btn { background: #303134; color: #fff; border: 1px solid #5f6368; padding: 8px 20px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; }
-        .tab-btn.active { background: var(--tab-active); color: #1967d2; border: 1px solid #8ab4f8; }
+  <div class="lineup-field">
+    <!-- പ്ലെയർ ഫോട്ടോകളും ഡ്രാഗ് ചെയ്യാവുന്ന ഡിവുകളും ഇവിടെ നൽകാം -->
+  </div>
 
-        .section { display: none; padding-top: 15px; }
-        .section.active { display: block; }
-
-        /* കാർഡുകൾ */
-        .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .card-h { color: var(--grey); font-size: 11px; text-transform: uppercase; margin-bottom: 10px; font-weight: bold; }
-        
-        /* ലൈനപ്പ് ഗ്രൂപ്പ് */
-        .lineup-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .player { display: flex; align-items: center; gap: 8px; font-size: 14px; padding: 5px 0; }
-        .player img { width: 32px; height: 32px; border-radius: 50%; background: #333; }
-
-        /* അഡ്മിൻ പാനൽ */
-        #adminPanel { display: none; background: #202124; padding: 20px; border-radius: 15px; margin-top: 20px; border: 2px solid var(--blue); position: relative; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; background: #333; border: 1px solid #555; color: white; border-radius: 6px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 14px; }
-        .btn-update { background: var(--blue); color: white; }
-    </style>
-</head>
-<body>
-
-    <!-- 1. സ്കോർബോർഡ് -->
-    <div class="scoreboard">
-        <div class="league-info" id="dispLeague">UEFA Champions League • Round of 16</div>
-        <div class="score-row">
-            <div class="team">
-                <img id="dispHomeLogo" class="logo-l" src="https://wikimedia.org">
-                <div id="dispHomeName">Real Madrid</div>
-            </div>
-            <div class="score-l"><span id="dispHScore">3</span> - <span id="dispAScore">0</span></div>
-            <div class="team">
-                <img id="dispAwayLogo" class="logo-l" src="https://wikimedia.org">
-                <div id="dispAwayName">Man City</div>
-            </div>
-        </div>
-        <div class="match-status" id="dispStatus">FT Yesterday</div>
-    </div>
-
-    <!-- 2. ടാബുകൾ -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openTab(event, 'overview')">Overview</button>
-        <button class="tab-btn" onclick="openTab(event, 'matches')">Matches</button>
-        <button class="tab-btn" onclick="openTab(event, 'table')">Table</button>
-        <button class="tab-btn" onclick="openTab(event, 'players')">Players</button>
-    </div>
-
-    <!-- 3. സെക്ഷനുകൾ -->
-    <!-- OVERVIEW -->
-    <div id="overview" class="section active">
-        <div class="card">
-            <div class="card-h">Goals</div>
-            <div style="font-size: 14px;">⚽ F. Valverde (20', 27', 42')</div>
-        </div>
-        <div class="card">
-            <div class="card-h">Match Info</div>
-            <div style="font-size: 14px; color: var(--grey);">Venue: Santiago Bernabéu<br>Attendance: 81,044</div>
-        </div>
-        <div class="card">
-            <div class="card-h">Manager</div>
-            <div class="player"><img id="dispMgrImg" src=""> <b id="dispMgrName">Alvaro Arbeloa</b></div>
-        </div>
-    </div>
-
-    <!-- MATCHES -->
-    <div id="matches" class="section">
-        <div class="card">
-            <div class="card-h">Upcoming - 2nd Leg</div>
-            <div style="display:flex; justify-content:space-between;">
-                <span>Man City vs Real Madrid</span>
-                <span style="color:var(--grey); font-size:12px;">17 Mar, 1:30 AM</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- TABLE -->
-    <div id="table" class="section">
-        <div class="card">
-            <div class="card-h">Champions League Stats</div>
-            <p style="font-size:14px;">Real Madrid leads 3-0 on aggregate.</p>
-        </div>
-    </div>
-
-    <!-- PLAYERS -->
-    <div id="players" class="section">
-        <div class="card">
-            <div class="card-h">Starting XI - Real Madrid</div>
-            <div class="lineup-list" id="playerGrid">
-                <div class="player">👤 Courtois</div>
-                <div class="player">👤 Alexander-Arnold</div>
-                <div class="player">👤 Rüdiger</div>
-                <div class="player">👤 Huijsen</div>
-                <div class="player">👤 Mendy</div>
-                <div class="player">👤 Valverde</div>
-                <div class="player">👤 Tchouaméni</div>
-                <div class="player">👤 Brahim Díaz</div>
-                <div class="player">👤 Thiago</div>
-                <div class="player">👤 Arda Güler</div>
-                <div class="player">👤 Vinícius Jr.</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ADMIN ACCESS -->
-    <center><button onclick="checkAdmin()" style="background:none; border:none; color:#111; font-size:10px; margin-top:50px;">Admin Access</button></center>
-
-    <!-- ADMIN PANEL -->
-    <div id="adminPanel">
-        <h3 style="color:var(--blue); margin-top:0;">⚙️ Admin Control</h3>
-        <label>Match Details</label>
-        <input type="text" id="inLeague" placeholder="League & Round">
-        <input type="text" id="inHome" placeholder="Home Team">
-        <input type="text" id="inAway" placeholder="Away Team">
-        <div style="display:flex; gap:10px;">
-            <input type="number" id="inHScore" placeholder="Home Score">
-            <input type="number" id="inAScore" placeholder="Away Score">
-        </div>
-        <label>Update Timer/Status</label>
-        <input type="text" id="inStatus" placeholder="e.g. LIVE 45:00 or FT Yesterday">
-        
-        <hr style="border:0.5px solid #444; margin:15px 0;">
-        <label>Add Player Name</label>
-        <input type="text" id="inPName" placeholder="Player Name">
-        <button class="btn btn-update" onclick="addP()">Add Player to List</button>
-
-        <button class="btn btn-update" onclick="updateAll()">Apply All Changes</button>
-        <button class="btn" style="background:#444; color:#fff;" onclick="location.reload()">Logout</button>
-    </div>
-
-    <script>
-        function openTab(e, name) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-            document.getElementById(name).classList.add('active');
-            e.currentTarget.classList.add('active');
-        }
-
-        function checkAdmin() {
-            if(prompt("Password:") === "1234") document.getElementById('adminPanel').style.display='block';
-        }
-
-        function updateAll() {
-            document.getElementById('dispLeague').innerText = document.getElementById('inLeague').value || document.getElementById('dispLeague').innerText;
-            document.getElementById('dispHomeName').innerText = document.getElementById('inHome').value || "Real Madrid";
-            document.getElementById('dispAwayName').innerText = document.getElementById('inAway').value || "Man City";
-            document.getElementById('dispHScore').innerText = document.getElementById('inHScore').value || 0;
-            document.getElementById('dispAScore').innerText = document.getElementById('inAScore').value || 0;
-            document.getElementById('dispStatus').innerText = document.getElementById('inStatus').value || "FT Yesterday";
-            alert("Updated!");
-        }
-
-        function addP() {
-            let name = document.getElementById('inPName').value;
-            if(name) {
-                let div = document.createElement('div');
-                div.className = 'player';
-                div.innerHTML = `👤 ${name}`;
-                document.getElementById('playerGrid').appendChild(div);
-                document.getElementById('inPName').value = "";
-            }
-        }
-    </script>
-</body>
-</html>
+  <div class="manager-info">
+    <img src="manager-photo.jpg" alt="Manager">
+    <p>Manager Name</p>
+  </div>
+</div>
