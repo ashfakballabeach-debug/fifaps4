@@ -3,184 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Match Center - Pro Admin</title>
+    <title>Real Madrid Style - Football Hub</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d; color: #fff; padding: 15px; margin: 0; }
-        .card { background: #181818; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #282828; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .flex { display: flex; justify-content: space-around; align-items: center; text-align: center; }
+        :root { --bg: #000; --card: #171717; --text: #fff; --grey: #aaa; --blue: #1a73e8; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
         
-        .img-box { position: relative; width: 65px; height: 65px; margin: 0 auto 10px; }
-        .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #252525; border: 2px solid #333; }
-        
-        .timer-text { font-size: 30px; color: #00ff41; font-weight: bold; font-family: 'Courier New', monospace; }
-        .score-text { font-size: 45px; font-weight: 800; margin: 5px 0; }
-        .league-title { color: #aaa; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; text-align: center; }
+        /* ഗൂഗിൾ സ്റ്റൈൽ ടാബുകൾ */
+        .tabs { display: flex; gap: 10px; overflow-x: auto; padding: 15px 0; border-bottom: 1px solid #333; margin-bottom: 15px; }
+        .tab-btn { background: #303134; color: var(--text); border: 1px solid #5f6368; padding: 8px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; }
+        .tab-btn.active { background: #e8f0fe; color: #1967d2; border: 1px solid #8ab4f8; }
 
-        #adminPanel { display: none; background: #202020; border-top: 3px solid #007bff; margin-top: 20px; padding: 20px; border-radius: 15px; }
-        
-        input, select { background: #2a2a2a; color: white; border: 1px solid #444; padding: 12px; margin: 8px 0; border-radius: 8px; width: calc(100% - 26px); font-size: 14px; }
-        .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin: 5px 0; width: 100%; font-size: 14px; }
-        .btn-blue { background: #007bff; color: white; }
-        .btn-green { background: #28a745; color: white; }
-        .btn-red { background: #dc3545; color: white; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
 
-        .player-row { display: flex; align-items: center; gap: 12px; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; }
-        .player-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        
-        .score-input-group { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 10px 0; }
-        .score-input-group input { width: 60px; text-align: center; font-size: 20px; font-weight: bold; }
+        /* മാച്ച് കാർഡ് */
+        .match-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; }
+        .match-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .team-box { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .team-logo { width: 24px; height: 24px; background: #333; border-radius: 50%; object-fit: cover; }
+        .score { font-weight: bold; font-size: 18px; }
+        .match-status { font-size: 12px; color: var(--grey); margin-bottom: 5px; }
+
+        /* ടേബിൾ സ്റ്റൈൽ */
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; }
+        th { background: #202124; color: var(--grey); text-align: left; padding: 12px; font-size: 12px; }
+        td { padding: 12px; border-top: 1px solid #333; font-size: 14px; }
+        .win-dot { color: #34a853; font-size: 18px; }
+        .loss-dot { color: #ea4335; font-size: 18px; }
+
+        /* അഡ്മിൻ പാനൽ */
+        #adminPanel { display: none; background: #202124; padding: 20px; border-radius: 15px; margin-top: 20px; border-top: 4px solid var(--blue); }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; background: #303134; border: 1px solid #5f6368; color: white; border-radius: 5px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-blue { background: var(--blue); color: white; }
     </style>
 </head>
 <body>
 
-    <!-- ഡിസ്‌പ്ലേ സെക്ഷൻ -->
-    <div class="card">
-        <div id="dispLeague" class="league-title">LEAGUE NAME • ROUND</div>
-        <div class="flex">
-            <div>
-                <div class="img-box"><img id="dispHomeLogo" src="" class="logo-img"></div>
-                <b id="dispHomeName">Home Team</b>
+    <!-- ഹെഡർ -->
+    <div style="padding: 10px 0;">
+        <h2 id="dispTeamTitle" style="margin: 0;">Real Madrid</h2>
+        <div style="color: var(--grey); font-size: 14px; margin-top: 4px;">2nd in La Liga</div>
+    </div>
+
+    <!-- ടാബുകൾ -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'overview')">Overview</button>
+        <button class="tab-btn" onclick="openTab(event, 'matches')">Matches</button>
+        <button class="tab-btn" onclick="openTab(event, 'table')">Table</button>
+        <button class="tab-btn" onclick="openTab(event, 'players')">Players</button>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div id="overview" class="content-section active">
+        <div class="match-card">
+            <div class="match-status">UEFA Champions League • Yesterday</div>
+            <div class="match-row">
+                <div class="team-box"><img id="ovHomeLogo" src="" class="team-logo"> <span id="ovHomeName">Real Madrid</span></div>
+                <div class="score" id="ovHomeScore">3</div>
             </div>
-            <div>
-                <div class="timer-text"><span id="dispMin">00</span>:<span id="dispSec">00</span><span id="dispExtra" style="color: #ffcc00; font-size: 16px;"></span></div>
-                <div class="score-text"><span id="dispHScore">0</span> - <span id="dispAScore">0</span></div>
+            <div class="match-row">
+                <div class="team-box"><img id="ovAwayLogo" src="" class="team-logo"> <span id="ovAwayName">Man City</span></div>
+                <div class="score" id="ovAwayScore">0</div>
             </div>
-            <div>
-                <div class="img-box"><img id="dispAwayLogo" src="" class="logo-img"></div>
-                <b id="dispAwayName">Away Team</b>
+        </div>
+        <div id="dispTimer" style="text-align: center; color: #00ff00; font-family: monospace; font-size: 20px;">00:00</div>
+    </div>
+
+    <!-- MATCHES SECTION -->
+    <div id="matches" class="content-section">
+        <div class="match-card" id="matchList">
+            <div style="color: var(--grey); font-size: 12px; margin-bottom: 10px;">UPCOMING MATCHES</div>
+            <div class="match-row">
+                <div class="team-box">Real Madrid vs Elche</div>
+                <div style="font-size: 12px; text-align: right;">Sun, 15 Mar<br>1:30 am</div>
             </div>
         </div>
     </div>
 
-    <!-- ലൈനപ്പ് സെക്ഷൻ -->
-    <div class="card">
-        <h3 style="margin-top:0; border-bottom: 1px solid #333; padding-bottom: 10px;">📋 Lineup & Manager</h3>
-        <div id="dispManagerBox" class="player-row">
-            <img id="dispMgrImg" src="https://placeholder.com">
-            <div><small style="color:#888;">Manager</small><br><b id="dispMgrName">-</b></div>
+    <!-- TABLE SECTION -->
+    <div id="table" class="content-section">
+        <table>
+            <thead><tr><th>POS</th><th>TEAM</th><th>P</th><th>W</th><th>D</th><th>L</th><th>PTS</th></tr></thead>
+            <tbody id="leagueTableBody">
+                <tr><td>1</td><td>Barcelona</td><td>27</td><td>20</td><td>4</td><td>3</td><td>64</td></tr>
+                <tr style="background: #2a2b2e;"><td>2</td><td id="tabTeamName">Real Madrid</td><td>27</td><td>19</td><td>5</td><td>3</td><td>62</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PLAYERS SECTION -->
+    <div id="players" class="content-section">
+        <div id="playerGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <!-- കളിക്കാർ ഇവിടെ വരും -->
         </div>
-        <div id="dispPlayerList" style="margin-top: 10px;"></div>
     </div>
 
     <!-- അഡ്മിൻ ലോഗിൻ -->
-    <center><button onclick="loginAdmin()" style="background:none; border:none; color:#222; font-size: 10px; margin-top: 40px; cursor: pointer;">Admin Access</button></center>
+    <center><button onclick="checkPass()" style="background:none; border:none; color:#222; font-size: 10px; margin-top: 50px;">Admin Access</button></center>
 
     <!-- അഡ്മിൻ പാനൽ -->
     <div id="adminPanel">
-        <h3 style="color:#007bff; margin-top:0;">⚙️ Admin Dashboard</h3>
+        <h3 style="color: var(--blue);">⚙️ Admin Dashboard</h3>
         
-        <label><b>1. Match Details:</b></label>
-        <input type="text" id="inLeague" placeholder="League & Round">
-        <div style="display:flex; gap:5px;">
-            <input type="text" id="inHome" placeholder="Home Name">
-            <input type="text" id="inAway" placeholder="Away Name">
+        <label>Update Live Match:</label>
+        <input type="text" id="inHName" placeholder="Home Team">
+        <input type="text" id="inAName" placeholder="Away Team">
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="inHScore" placeholder="Home Score">
+            <input type="number" id="inAScore" placeholder="Away Score">
         </div>
+        <button class="btn btn-blue" onclick="updateLive()">Update Live Score</button>
         
-        <label><b>2. Team Logos:</b></label>
-        <div style="font-size:12px; color:#aaa;">Home: <input type="file" id="inHomeLogo" onchange="prevImg(this, 'dispHomeLogo')"></div>
-        <div style="font-size:12px; color:#aaa;">Away: <input type="file" id="inAwayLogo" onchange="prevImg(this, 'dispAwayLogo')"></div>
-
-        <hr style="border:0.5px solid #333; margin: 15px 0;">
-
-        <label><b>3. Score Update:</b></label>
-        <div class="score-input-group">
-            <input type="number" id="inHScore" value="0">
-            <span>VS</span>
-            <input type="number" id="inAScore" value="0">
-        </div>
-        <button class="btn btn-blue" onclick="updateMatchInfo()">Update Score & Names</button>
-
-        <hr style="border:0.5px solid #333; margin: 15px 0;">
+        <hr style="border: 0.5px solid #444; margin: 20px 0;">
         
-        <label><b>4. Timer Control:</b></label>
-        <button class="btn btn-green" onclick="startClock()">▶ Start / Resume</button>
-        <button class="btn btn-red" onclick="stopClock()">⏸ Pause</button>
-        <div style="display:flex; gap:5px; align-items:center;">
-            <input type="number" id="inExtra" placeholder="Extra Time (mins)">
-            <button class="btn btn-blue" style="width:120px;" onclick="addExtra()">Set</button>
-        </div>
+        <label>Add Player:</label>
+        <input type="text" id="inPName" placeholder="Player Name">
+        <input type="file" id="inPPhoto">
+        <button class="btn btn-blue" onclick="addPlayer()">Add Player</button>
 
-        <hr style="border:0.5px solid #333; margin: 15px 0;">
-
-        <label><b>5. Add Player/Manager:</b></label>
-        <input type="text" id="inStaffName" placeholder="Name">
-        <select id="inRole"><option value="player">Player</option><option value="manager">Manager</option></select>
-        <input type="file" id="inStaffPhoto">
-        <button class="btn btn-blue" onclick="addStaff()">Add to Team</button>
-        
-        <button class="btn btn-red" onclick="location.reload()" style="margin-top:20px; background:#444;">Logout</button>
+        <button class="btn" style="background:#444; color:white;" onclick="location.reload()">Logout</button>
     </div>
 
     <script>
-        let clock;
-        let mm = 0, ss = 0;
-        const ADMIN_PASS = "1234"; 
-
-        function loginAdmin() {
-            if(prompt("Password:") === ADMIN_PASS) {
-                document.getElementById('adminPanel').style.display = 'block';
-                window.scrollTo(0, document.body.scrollHeight);
-            } else { alert("Wrong Password!"); }
+        function openTab(evt, sectionName) {
+            let i, content, tablinks;
+            content = document.getElementsByClassName("content-section");
+            for (i = 0; i < content.length; i++) content[i].className = content[i].className.replace(" active", "");
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            document.getElementById(sectionName).className += " active";
+            evt.currentTarget.className += " active";
         }
 
-        function prevImg(input, target) {
-            if (input.files && input.files[0]) {
-                let r = new FileReader();
-                r.onload = e => document.getElementById(target).src = e.target.result;
-                r.readAsDataURL(input.files[0]);
+        function checkPass() {
+            if(prompt("Password:") === "1234") {
+                document.getElementById('adminPanel').style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
             }
         }
 
-        function updateMatchInfo() {
-            // പേരുകൾ അപ്ഡേറ്റ് ചെയ്യുന്നു
-            document.getElementById('dispLeague').innerText = document.getElementById('inLeague').value || "LEAGUE NAME";
-            document.getElementById('dispHomeName').innerText = document.getElementById('inHome').value || "Home Team";
-            document.getElementById('dispAwayName').innerText = document.getElementById('inAway').value || "Away Team";
-            
-            // സ്കോർ അപ്ഡേറ്റ് ചെയ്യുന്നു
-            document.getElementById('dispHScore').innerText = document.getElementById('inHScore').value;
-            document.getElementById('dispAScore').innerText = document.getElementById('inAScore').value;
-            
-            alert("Match Info Updated!");
+        function updateLive() {
+            document.getElementById('ovHomeName').innerText = document.getElementById('inHName').value;
+            document.getElementById('ovAwayName').innerText = document.getElementById('inAName').value;
+            document.getElementById('ovHomeScore').innerText = document.getElementById('inHScore').value;
+            document.getElementById('ovAwayScore').innerText = document.getElementById('inAScore').value;
+            alert("Updated!");
         }
 
-        function startClock() {
-            clearInterval(clock);
-            clock = setInterval(() => {
-                ss++;
-                if(ss == 60) { mm++; ss = 0; }
-                document.getElementById('dispMin').innerText = mm < 10 ? '0' + mm : mm;
-                document.getElementById('dispSec').innerText = ss < 10 ? '0' + ss : ss;
-            }, 1000);
-        }
-
-        function stopClock() { clearInterval(clock); }
-
-        function addExtra() {
-            let val = document.getElementById('inExtra').value;
-            document.getElementById('dispExtra').innerText = val ? " +" + val : "";
-        }
-
-        function addStaff() {
-            const name = document.getElementById('inStaffName').value;
-            const role = document.getElementById('inRole').value;
-            const file = document.getElementById('inStaffPhoto').files[0];
-
-            if(!name || !file) return alert("Please provide Name and Photo");
-
-            let r = new FileReader();
-            r.onload = e => {
-                if(role === 'manager') {
-                    document.getElementById('dispMgrImg').src = e.target.result;
-                    document.getElementById('dispMgrName').innerText = name;
-                } else {
-                    const div = document.createElement('div');
-                    div.className = 'player-row';
-                    div.innerHTML = `<img src="${e.target.result}"> <b>${name}</b> <button onclick="this.parentElement.remove()" style="margin-left:auto; background:none; border:none; color:red; cursor:pointer;">✕</button>`;
-                    document.getElementById('dispPlayerList').appendChild(div);
-                }
-            };
-            r.readAsDataURL(file);
+        function addPlayer() {
+            let name = document.getElementById('inPName').value;
+            let file = document.getElementById('inPPhoto').files[0];
+            if(name && file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let div = document.createElement('div');
+                    div.className = 'match-card';
+                    div.style.textAlign = 'center';
+                    div.innerHTML = `<img src="${e.target.result}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;"><br><b>${name}</b>`;
+                    document.getElementById('playerGrid').appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     </script>
 </body>
