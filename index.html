@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Team Manager Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #e0e0e0; padding: 20px; }
+        .card { background: #1a1a1a; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #333; }
+        .flex { display: flex; justify-content: space-around; align-items: center; text-align: center; }
+        
+        /* ഫോട്ടോകൾക്കുള്ള സ്റ്റൈൽ */
+        .img-container { position: relative; width: 70px; height: 70px; margin: 0 auto 10px; }
+        .team-logo, .player-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; border: 2px solid #444; }
+        .change-btn { position: absolute; bottom: 0; right: 0; background: #007bff; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; color: white; font-size: 12px; }
+
+        .timer { font-size: 28px; color: #00ff00; font-weight: bold; font-family: monospace; }
+        .extra-time { color: #ffcc00; font-size: 18px; margin-left: 5px; }
+        .score { font-size: 40px; font-weight: 900; margin: 10px 0; }
+        
+        input, select { background: #2a2a2a; color: white; border: 1px solid #444; padding: 10px; margin: 5px 0; border-radius: 5px; width: calc(100% - 22px); }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; margin: 5px; }
+        .btn-blue { background: #007bff; color: white; }
+        .btn-green { background: #28a745; color: white; }
+        .btn-yellow { background: #ffc107; color: black; }
+
+        .player-item { display: flex; align-items: center; gap: 10px; background: #252525; padding: 8px; border-radius: 10px; margin-bottom: 5px; }
+        .player-item img { width: 40px; height: 40px; border-radius: 50%; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; border-bottom: 1px solid #333; text-align: center; }
+        .win-icon { color: #28a745; font-weight: bold; }
+        .loss-icon { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2 style="text-align: center; color: #fff;">⚽ Match Center</h2>
+
+    <!-- തത്സമയ മത്സരം കാണിക്കുന്ന ഭാഗം -->
+    <div class="card">
+        <div id="matchHeader" style="text-align:center; color: #888; font-size: 14px; margin-bottom: 10px;">League - Round</div>
+        <div class="flex">
+            <div>
+                <div class="img-container">
+                    <img id="homeLogo" src="" class="team-logo">
+                    <button class="change-btn" onclick="document.getElementById('homeLogoInput').click()">✎</button>
+                </div>
+                <h3 id="homeDisplayName">Home Team</h3>
+            </div>
+            <div>
+                <div class="timer"><span id="mins">00</span>:<span id="secs">00</span><span id="extraTime" class="extra-time"></span></div>
+                <div class="score"><span id="hScore">0</span> - <span id="aScore">0</span></div>
+            </div>
+            <div>
+                <div class="img-container">
+                    <img id="awayLogo" src="" class="team-logo">
+                    <button class="change-btn" onclick="document.getElementById('awayLogoInput').click()">✎</button>
+                </div>
+                <h3 id="awayDisplayName">Away Team</h3>
+            </div>
+        </div>
+        <div id="h2hDisplay" style="text-align: center; font-size: 13px; color: #aaa; margin-top: 10px;">H2H: 0 Wins | 0 Draws | 0 Loss</div>
+    </div>
+
+    <!-- അഡ്മിൻ കൺട്രോൾസ് -->
+    <div class="card">
+        <h3>⚙️ Admin Controls</h3>
+        <input type="text" id="leagueName" placeholder="League Name">
+        <input type="text" id="roundName" placeholder="Round (e.g. Semi Final)">
+        <input type="text" id="homeName" placeholder="Home Team Name">
+        <input type="text" id="awayName" placeholder="Away Team Name">
+        
+        <!-- ഹിഡൻ ഫയൽ ഇൻപുട്ടുകൾ -->
+        <input type="file" id="homeLogoInput" style="display:none" onchange="previewImage(this, 'homeLogo')">
+        <input type="file" id="awayLogoInput" style="display:none" onchange="previewImage(this, 'awayLogo')">
+
+        <button class="btn btn-blue" onclick="saveBasicInfo()">Update Match Info</button>
+        <button class="btn btn-green" onclick="startTimer()">Start 90' Timer</button>
+        <button class="btn btn-yellow" onclick="setExtraTime()">Add Extra Time</button>
+    </div>
+
+    <!-- ലൈനപ്പ് & മാനേജർ -->
+    <div class="card">
+        <h3>📋 Lineup & Manager</h3>
+        <input type="text" id="managerInput" placeholder="Manager Name">
+        <button class="btn btn-blue" onclick="document.getElementById('managerPhotoInput').click()">Add Manager Photo</button>
+        <input type="file" id="managerPhotoInput" style="display:none" onchange="previewImage(this, 'managerImg')">
+        
+        <div class="player-item" id="managerDisplay" style="margin-top: 10px;">
+            <img id="managerImg" src="" class="player-photo">
+            <span id="managerNameText">Manager: -</span>
+        </div>
+
+        <hr style="border:0.5px solid #333; margin: 20px 0;">
+        
+        <input type="text" id="playerName" placeholder="Player Name">
+        <button class="btn btn-blue" onclick="document.getElementById('playerPhotoInput').click()">Select Photo & Add Player</button>
+        <input type="file" id="playerPhotoInput" style="display:none" onchange="addPlayerWithPhoto(this)">
+        
+        <div id="playerList" style="margin-top: 15px;"></div>
+    </div>
+
+    <script>
+        let timer;
+        let m = 0, s = 0;
+
+        function previewImage(input, targetId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(targetId).src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveBasicInfo() {
+            document.getElementById('matchHeader').innerText = document.getElementById('leagueName').value + " - " + document.getElementById('roundName').value;
+            document.getElementById('homeDisplayName').innerText = document.getElementById('homeName').value;
+            document.getElementById('awayDisplayName').innerText = document.getElementById('awayName').value;
+            document.getElementById('managerNameText').innerText = "Manager: " + document.getElementById('managerInput').value;
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                s++;
+                if(s == 60) { m++; s = 0; }
+                document.getElementById('mins').innerText = m < 10 ? '0' + m : m;
+                document.getElementById('secs').innerText = s < 10 ? '0' + s : s;
+                if(m >= 90) clearInterval(timer);
+            }, 1000);
+        }
+
+        function setExtraTime() {
+            let ext = prompt("Extra time minutes:");
+            document.getElementById('extraTime').innerText = " +" + ext;
+        }
+
+        function addPlayerWithPhoto(input) {
+            const name = document.getElementById('playerName').value;
+            const file = input.files[0];
+            if (name && file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'player-item';
+                    div.innerHTML = `<img src="${e.target.result}"> <span>${name}</span> 
+                                    <button style="margin-left:auto; background:none; border:none; color:red; cursor:pointer;" onclick="this.parentElement.remove()">Remove</button>`;
+                    document.getElementById('playerList').appendChild(div);
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('playerName').value = "";
+            } else {
+                alert("പേരും ഫോട്ടോയും നൽകുക!");
+            }
+        }
+    </script>
+
+</body>
+</html>
