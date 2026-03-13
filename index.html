@@ -3,46 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Match Center - Admin Lock</title>
+    <title>Football Match Center - Pro Admin</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d; color: #fff; padding: 15px; margin: 0; }
         .card { background: #181818; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #282828; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .flex { display: flex; justify-content: space-around; align-items: center; text-align: center; }
         
-        /* ഫോട്ടോകൾ */
         .img-box { position: relative; width: 65px; height: 65px; margin: 0 auto 10px; }
-        .logo-img, .player-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #252525; border: 2px solid #333; }
-        .edit-badge { position: absolute; bottom: 0; right: 0; background: #007bff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; color: white; font-size: 10px; display: none; }
-
+        .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #252525; border: 2px solid #333; }
+        
         .timer-text { font-size: 30px; color: #00ff41; font-weight: bold; font-family: 'Courier New', monospace; }
         .score-text { font-size: 45px; font-weight: 800; margin: 5px 0; }
         .league-title { color: #aaa; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; text-align: center; }
 
-        /* അഡ്മിൻ പാനൽ തുടക്കത്തിൽ മറച്ചിരിക്കും */
-        #adminPanel { display: none; background: #202020; border-top: 2px solid #007bff; margin-top: 20px; }
+        #adminPanel { display: none; background: #202020; border-top: 3px solid #007bff; margin-top: 20px; padding: 20px; border-radius: 15px; }
         
-        input, select { background: #2a2a2a; color: white; border: 1px solid #444; padding: 10px; margin: 8px 0; border-radius: 6px; width: calc(100% - 22px); }
-        .btn { padding: 12px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin: 5px 0; width: 100%; }
+        input, select { background: #2a2a2a; color: white; border: 1px solid #444; padding: 12px; margin: 8px 0; border-radius: 8px; width: calc(100% - 26px); font-size: 14px; }
+        .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin: 5px 0; width: 100%; font-size: 14px; }
         .btn-blue { background: #007bff; color: white; }
         .btn-green { background: #28a745; color: white; }
         .btn-red { background: #dc3545; color: white; }
 
         .player-row { display: flex; align-items: center; gap: 12px; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; }
-        .player-row img { width: 40px; height: 40px; border-radius: 50%; }
-        .admin-only { display: none; } /* അഡ്മിൻ ബട്ടണുകൾ മറയ്ക്കാൻ */
+        .player-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        
+        .score-input-group { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 10px 0; }
+        .score-input-group input { width: 60px; text-align: center; font-size: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- ഡിസ്‌പ്ലേ സെക്ഷൻ (എല്ലാവർക്കും കാണാവുന്നത്) -->
+    <!-- ഡിസ്‌പ്ലേ സെക്ഷൻ -->
     <div class="card">
         <div id="dispLeague" class="league-title">LEAGUE NAME • ROUND</div>
         <div class="flex">
             <div>
-                <div class="img-box">
-                    <img id="dispHomeLogo" src="" class="logo-img">
-                    <button class="edit-badge admin-only" onclick="document.getElementById('inHomeLogo').click()">✎</button>
-                </div>
+                <div class="img-box"><img id="dispHomeLogo" src="" class="logo-img"></div>
                 <b id="dispHomeName">Home Team</b>
             </div>
             <div>
@@ -50,10 +46,7 @@
                 <div class="score-text"><span id="dispHScore">0</span> - <span id="dispAScore">0</span></div>
             </div>
             <div>
-                <div class="img-box">
-                    <img id="dispAwayLogo" src="" class="logo-img">
-                    <button class="edit-badge admin-only" onclick="document.getElementById('inAwayLogo').click()">✎</button>
-                </div>
+                <div class="img-box"><img id="dispAwayLogo" src="" class="logo-img"></div>
                 <b id="dispAwayName">Away Team</b>
             </div>
         </div>
@@ -61,76 +54,73 @@
 
     <!-- ലൈനപ്പ് സെക്ഷൻ -->
     <div class="card">
-        <h3 style="margin-top:0;">📋 Lineup & Manager</h3>
+        <h3 style="margin-top:0; border-bottom: 1px solid #333; padding-bottom: 10px;">📋 Lineup & Manager</h3>
         <div id="dispManagerBox" class="player-row">
-            <img id="dispMgrImg" src="">
-            <div>
-                <small style="color:#888;">Manager</small><br>
-                <b id="dispMgrName">-</b>
-            </div>
+            <img id="dispMgrImg" src="https://placeholder.com">
+            <div><small style="color:#888;">Manager</small><br><b id="dispMgrName">-</b></div>
         </div>
-        <div id="dispPlayerList" style="margin-top: 10px;">
-            <!-- കളിക്കാർ ഇവിടെ വരും -->
-        </div>
+        <div id="dispPlayerList" style="margin-top: 10px;"></div>
     </div>
 
-    <!-- അഡ്മിൻ ലോഗിൻ ബട്ടൺ (രഹസ്യമായി താഴെ) -->
-    <center>
-        <button onclick="loginAdmin()" style="background:none; border:none; color:#222; font-size: 10px; margin-top: 50px;">Admin Access</button>
-    </center>
+    <!-- അഡ്മിൻ ലോഗിൻ -->
+    <center><button onclick="loginAdmin()" style="background:none; border:none; color:#222; font-size: 10px; margin-top: 40px; cursor: pointer;">Admin Access</button></center>
 
-    <!-- അഡ്മിൻ കൺട്രോൾ പാനൽ (പാസ്‌വേഡ് അടിച്ചാൽ മാത്രം കാണുന്നത്) -->
-    <div id="adminPanel" class="card">
-        <h3 style="color:#007bff; border-bottom: 1px solid #333; padding-bottom: 10px;">⚙️ Admin Dashboard</h3>
+    <!-- അഡ്മിൻ പാനൽ -->
+    <div id="adminPanel">
+        <h3 style="color:#007bff; margin-top:0;">⚙️ Admin Dashboard</h3>
         
-        <label>Match Info:</label>
+        <label><b>1. Match Details:</b></label>
         <input type="text" id="inLeague" placeholder="League & Round">
-        <input type="text" id="inHome" placeholder="Home Team Name">
-        <input type="text" id="inAway" placeholder="Away Team Name">
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="inHome" placeholder="Home Name">
+            <input type="text" id="inAway" placeholder="Away Name">
+        </div>
         
-        <label>Logos:</label>
-        <input type="file" id="inHomeLogo" onchange="prevImg(this, 'dispHomeLogo')">
-        <input type="file" id="inAwayLogo" onchange="prevImg(this, 'dispAwayLogo')">
-
-        <button class="btn btn-blue" onclick="updateBasic()">Update Scoreboard</button>
-        
-        <hr style="border:0.5px solid #333; margin: 15px 0;">
-        
-        <label>Timer & Score:</label>
-        <button class="btn btn-green" onclick="startClock()">Start / Resume Match</button>
-        <button class="btn btn-red" onclick="stopClock()">Pause Match</button>
-        <input type="number" id="inExtra" placeholder="Add Extra Time (mins)">
-        <button class="btn btn-blue" onclick="addExtra()">Set Extra Time</button>
+        <label><b>2. Team Logos:</b></label>
+        <div style="font-size:12px; color:#aaa;">Home: <input type="file" id="inHomeLogo" onchange="prevImg(this, 'dispHomeLogo')"></div>
+        <div style="font-size:12px; color:#aaa;">Away: <input type="file" id="inAwayLogo" onchange="prevImg(this, 'dispAwayLogo')"></div>
 
         <hr style="border:0.5px solid #333; margin: 15px 0;">
 
-        <label>Add Player/Manager:</label>
+        <label><b>3. Score Update:</b></label>
+        <div class="score-input-group">
+            <input type="number" id="inHScore" value="0">
+            <span>VS</span>
+            <input type="number" id="inAScore" value="0">
+        </div>
+        <button class="btn btn-blue" onclick="updateMatchInfo()">Update Score & Names</button>
+
+        <hr style="border:0.5px solid #333; margin: 15px 0;">
+        
+        <label><b>4. Timer Control:</b></label>
+        <button class="btn btn-green" onclick="startClock()">▶ Start / Resume</button>
+        <button class="btn btn-red" onclick="stopClock()">⏸ Pause</button>
+        <div style="display:flex; gap:5px; align-items:center;">
+            <input type="number" id="inExtra" placeholder="Extra Time (mins)">
+            <button class="btn btn-blue" style="width:120px;" onclick="addExtra()">Set</button>
+        </div>
+
+        <hr style="border:0.5px solid #333; margin: 15px 0;">
+
+        <label><b>5. Add Player/Manager:</b></label>
         <input type="text" id="inStaffName" placeholder="Name">
-        <select id="inRole">
-            <option value="player">Player</option>
-            <option value="manager">Manager</option>
-        </select>
+        <select id="inRole"><option value="player">Player</option><option value="manager">Manager</option></select>
         <input type="file" id="inStaffPhoto">
         <button class="btn btn-blue" onclick="addStaff()">Add to Team</button>
         
-        <button class="btn btn-red" onclick="location.reload()" style="margin-top: 20px;">Logout Admin</button>
+        <button class="btn btn-red" onclick="location.reload()" style="margin-top:20px; background:#444;">Logout</button>
     </div>
 
     <script>
         let clock;
         let mm = 0, ss = 0;
-        const ADMIN_PASS = "1234"; // നിങ്ങളുടെ പാസ്‌വേഡ് ഇവിടെ മാറ്റാം
+        const ADMIN_PASS = "1234"; 
 
         function loginAdmin() {
-            let p = prompt("Password നൽകുക:");
-            if(p === ADMIN_PASS) {
+            if(prompt("Password:") === ADMIN_PASS) {
                 document.getElementById('adminPanel').style.display = 'block';
-                // എഡിറ്റ് ബട്ടണുകൾ കാണിക്കുക
-                document.querySelectorAll('.admin-only, .edit-badge').forEach(el => el.style.display = 'block');
-                alert("Welcome Admin!");
-            } else {
-                alert("Wrong Password!");
-            }
+                window.scrollTo(0, document.body.scrollHeight);
+            } else { alert("Wrong Password!"); }
         }
 
         function prevImg(input, target) {
@@ -141,10 +131,17 @@
             }
         }
 
-        function updateBasic() {
-            document.getElementById('dispLeague').innerText = document.getElementById('inLeague').value;
-            document.getElementById('dispHomeName').innerText = document.getElementById('inHome').value;
-            document.getElementById('dispAwayName').innerText = document.getElementById('inAway').value;
+        function updateMatchInfo() {
+            // പേരുകൾ അപ്ഡേറ്റ് ചെയ്യുന്നു
+            document.getElementById('dispLeague').innerText = document.getElementById('inLeague').value || "LEAGUE NAME";
+            document.getElementById('dispHomeName').innerText = document.getElementById('inHome').value || "Home Team";
+            document.getElementById('dispAwayName').innerText = document.getElementById('inAway').value || "Away Team";
+            
+            // സ്കോർ അപ്ഡേറ്റ് ചെയ്യുന്നു
+            document.getElementById('dispHScore').innerText = document.getElementById('inHScore').value;
+            document.getElementById('dispAScore').innerText = document.getElementById('inAScore').value;
+            
+            alert("Match Info Updated!");
         }
 
         function startClock() {
@@ -154,14 +151,14 @@
                 if(ss == 60) { mm++; ss = 0; }
                 document.getElementById('dispMin').innerText = mm < 10 ? '0' + mm : mm;
                 document.getElementById('dispSec').innerText = ss < 10 ? '0' + ss : ss;
-                if(mm >= 90) clearInterval(clock);
             }, 1000);
         }
 
         function stopClock() { clearInterval(clock); }
 
         function addExtra() {
-            document.getElementById('dispExtra').innerText = " +" + document.getElementById('inExtra').value;
+            let val = document.getElementById('inExtra').value;
+            document.getElementById('dispExtra').innerText = val ? " +" + val : "";
         }
 
         function addStaff() {
@@ -169,7 +166,7 @@
             const role = document.getElementById('inRole').value;
             const file = document.getElementById('inStaffPhoto').files[0];
 
-            if(!name || !file) return alert("പേരും ഫോട്ടോയും നൽകുക!");
+            if(!name || !file) return alert("Please provide Name and Photo");
 
             let r = new FileReader();
             r.onload = e => {
@@ -179,7 +176,7 @@
                 } else {
                     const div = document.createElement('div');
                     div.className = 'player-row';
-                    div.innerHTML = `<img src="${e.target.result}"> <b>${name}</b>`;
+                    div.innerHTML = `<img src="${e.target.result}"> <b>${name}</b> <button onclick="this.parentElement.remove()" style="margin-left:auto; background:none; border:none; color:red; cursor:pointer;">✕</button>`;
                     document.getElementById('dispPlayerList').appendChild(div);
                 }
             };
